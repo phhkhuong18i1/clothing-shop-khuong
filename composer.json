@@ -1,0 +1,32 @@
+{
+    "name": "atelier/clothing-store",
+    "type": "project",
+    "description": "Editorial fashion storefront and product administration built with Laravel.",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0|^12.0",
+        "laravel/tinker": "^2.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": "tests/" }
+    },
+    "scripts": {
+        "post-autoload-dump": [ "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump", "@php artisan package:discover --ansi" ],
+        "post-create-project-cmd": [ "@php artisan key:generate --ansi", "@php artisan migrate --graceful --ansi" ],
+        "test": "@php artisan test"
+    },
+    "config": { "optimize-autoloader": true, "preferred-install": "dist", "sort-packages": true },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,15 @@
+@extends('layouts.admin')
+@section('title', $slide->exists ? 'Sửa slide' : 'Thêm slide')
+@section('content')
+<div class="mb-8"><a href="{{ route('admin.sliders.index') }}" class="eyebrow underline underline-offset-4">← Slider trang chủ</a><p class="eyebrow mt-7">Nội dung storefront</p><h1 class="mt-2 font-display text-4xl">{{ $slide->exists ? 'Chỉnh sửa slide' : 'Thêm slide mới' }}</h1></div>
+<form method="POST" enctype="multipart/form-data" action="{{ $slide->exists ? route('admin.sliders.update', $slide) : route('admin.sliders.store') }}" class="max-w-3xl rounded-md border border-stone-300 bg-white p-5 sm:p-8">@csrf @if($slide->exists)@method('PUT')@endif
+    @if($slide->exists)<img src="{{ $slide->image_url }}" alt="{{ $slide->title }}" class="mb-6 aspect-[16/7] max-h-72 w-full rounded-md object-cover">@endif
+    <label class="block"><span class="eyebrow">Tiêu đề *</span><input class="form-control mt-2" name="title" maxlength="180" required value="{{ old('title', $slide->title) }}"></label>
+    <label class="mt-6 block"><span class="eyebrow">Dòng nhãn</span><input class="form-control mt-2" name="eyebrow" maxlength="120" value="{{ old('eyebrow', $slide->eyebrow) }}" placeholder="Bộ sưu tập mới · Thu đông"></label>
+    <label class="mt-6 block"><span class="eyebrow">Mô tả</span><textarea class="form-control mt-2" name="description" rows="3" maxlength="500">{{ old('description', $slide->description) }}</textarea></label>
+    <label class="mt-6 block"><span class="eyebrow">Ảnh slide {{ $slide->exists ? '(để trống nếu giữ ảnh hiện tại)' : '*' }}</span><input class="form-control mt-2" type="file" name="image" accept="image/jpeg,image/png,image/webp" @required(!$slide->exists)><span class="mt-1 block text-xs text-stone-500">JPEG, PNG hoặc WebP, tối đa 5 MB.</span></label>
+    <div class="mt-6 grid gap-5 sm:grid-cols-2"><label class="block"><span class="eyebrow">Nhãn nút *</span><input class="form-control mt-2" name="link_label" maxlength="80" required value="{{ old('link_label', $slide->link_label ?: 'Khám phá bộ sưu tập') }}"></label><label class="block"><span class="eyebrow">Đường dẫn nút</span><input class="form-control mt-2" type="url" name="link_url" maxlength="2048" value="{{ old('link_url', $slide->link_url) }}" placeholder="https://..."></label></div>
+    <div class="mt-6 grid gap-5 sm:grid-cols-2"><label class="block"><span class="eyebrow">Thứ tự hiển thị *</span><input class="form-control mt-2" type="number" min="0" max="65535" name="sort_order" required value="{{ old('sort_order', $slide->sort_order ?? 0) }}"></label><label class="mt-8 flex items-center gap-3 text-sm"><input class="rounded border-stone-300 text-ink focus:ring-clay" type="checkbox" name="is_active" value="1" @checked(old('is_active', $slide->exists ? $slide->is_active : true))> Hiển thị slide</label></div>
+    <div class="mt-8 flex flex-wrap gap-3"><button class="button-primary">{{ $slide->exists ? 'Lưu thay đổi' : 'Tạo slide' }}</button><a class="button-outline" href="{{ route('admin.sliders.index') }}">Hủy</a></div>
+</form>
+@endsection

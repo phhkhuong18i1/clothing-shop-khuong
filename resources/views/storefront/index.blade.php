@@ -1,0 +1,19 @@
+@extends('layouts.store')
+@section('title', isset($activeCategory) ? $activeCategory->name : 'Sản phẩm')
+@section('content')
+<section class="container-page py-10 sm:py-16">
+    <div class="mb-9 border-b border-stone-300 pb-8"><p class="eyebrow">Bộ sưu tập</p><h1 class="mt-2 font-display text-4xl sm:text-5xl">{{ $activeCategory->name ?? 'Tinh giản cho mỗi ngày.' }}</h1><p class="mt-3 max-w-lg text-sm leading-6 text-stone-600">{{ $activeCategory->description ?? 'Những thiết kế chỉn chu, dễ mặc giúp bạn luôn cảm thấy là chính mình.' }}</p>@if(isset($activeCategory) && $activeCategory->children->isNotEmpty())<nav class="mt-6 flex flex-wrap gap-2" aria-label="Danh mục con">@foreach($activeCategory->children as $child)<a class="button-outline min-h-9 px-4 text-[10px]" href="{{ route('categories.show', $child) }}">{{ $child->name }} <span class="ml-2 text-stone-400">({{ $child->products()->where('is_published', true)->count() }})</span></a>@endforeach</nav>@endif</div>
+    <form method="GET" action="{{ route('products.index') }}" class="mb-9 grid gap-3 border-b border-stone-300 pb-7 sm:grid-cols-2 lg:grid-cols-6">
+        <label class="lg:col-span-2"><span class="sr-only">Tìm sản phẩm</span><input class="form-control" type="search" name="q" placeholder="Tìm trong bộ sưu tập" value="{{ request('q') }}"></label>
+        <label><span class="sr-only">Danh mục</span><select class="form-control" name="category"><option value="">Tất cả danh mục</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected((string) ($selectedCategoryId ?? '') === (string) $category->id)>{{ $category->parent ? '— '.$category->name : $category->name }}</option>@endforeach</select></label>
+        <label><span class="sr-only">Giá thấp nhất</span><input class="form-control" type="number" min="0" step="10000" name="min_price" placeholder="Giá từ" value="{{ request('min_price') }}"></label>
+        <label><span class="sr-only">Giá cao nhất</span><input class="form-control" type="number" min="0" step="10000" name="max_price" placeholder="Giá đến" value="{{ request('max_price') }}"></label>
+        <label><span class="sr-only">Kích cỡ</span><select class="form-control" name="size"><option value="">Mọi kích cỡ</option>@foreach(['XS','S','M','L','XL','XXL','Một cỡ'] as $size)<option value="{{ $size }}" @selected(request('size') === $size)>{{ $size }}</option>@endforeach</select></label>
+        <label><span class="sr-only">Sắp xếp sản phẩm</span><select class="form-control" name="sort"><option value="newest">Mới nhất</option><option value="price_asc" @selected(request('sort') === 'price_asc')>Giá: thấp đến cao</option><option value="price_desc" @selected(request('sort') === 'price_desc')>Giá: cao đến thấp</option></select></label>
+        <div class="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:gap-3 lg:col-span-6"><button class="button-primary min-h-10 w-full sm:w-auto">Lọc sản phẩm</button><a href="{{ route('products.index') }}" class="button-outline min-h-10 w-full sm:w-auto">Xóa bộ lọc</a></div>
+    </form>
+    <div class="mb-5 flex items-center justify-between"><p class="text-sm text-stone-600">{{ number_format($products->total()) }} sản phẩm</p></div>
+    @if($products->isNotEmpty())<div class="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">@foreach($products as $product)@include('storefront._product-card', ['product' => $product])@endforeach</div><div class="mt-12">{{ $products->links() }}</div>
+    @else<div class="border border-stone-300 py-20 text-center"><p class="font-display text-3xl">Chưa tìm thấy sản phẩm phù hợp.</p><p class="mt-3 text-sm text-stone-600">Thử thay đổi bộ lọc hoặc khám phá toàn bộ bộ sưu tập.</p><a href="{{ route('products.index') }}" class="button-outline mt-6">Xóa bộ lọc</a></div>@endif
+</section>
+@endsection

@@ -1,0 +1,9 @@
+@extends('layouts.store')
+@section('title', $article->title)
+@section('content')
+<article class="container-page py-10 sm:py-16"><div class="mx-auto max-w-3xl"><a class="eyebrow underline underline-offset-4" href="{{ route('news.index') }}">← Tất cả tin tức</a><p class="eyebrow mt-8">{{ $article->published_at->format('d.m.Y') }} · Nhật ký Atelier</p><h1 class="mt-3 font-display text-4xl leading-tight sm:text-6xl">{{ $article->title }}</h1>@if($article->excerpt)<p class="mt-5 text-lg leading-7 text-stone-600">{{ $article->excerpt }}</p>@endif</div>
+    @if($article->cover_url)<img src="{{ $article->cover_url }}" alt="{{ $article->title }}" class="mt-9 aspect-[16/8] w-full rounded-md bg-[#e8e4dc] object-cover" fetchpriority="high">@endif
+    <div class="mx-auto mt-10 max-w-3xl whitespace-pre-line text-base leading-8 text-stone-700">{{ $article->body }}</div>
+</article>
+@if($relatedArticles->isNotEmpty())<section class="border-t border-stone-300 bg-white py-14 sm:py-20"><div class="container-page"><div class="mb-8 flex items-end justify-between"><div><p class="eyebrow">Đọc tiếp</p><h2 class="mt-2 font-display text-3xl">Câu chuyện khác</h2></div><a class="eyebrow underline underline-offset-4" href="{{ route('news.index') }}">Tất cả tin tức ↗</a></div><div class="grid gap-7 sm:grid-cols-3">@foreach($relatedArticles as $related)<a class="group" href="{{ route('news.show', $related) }}"><div class="aspect-[16/10] overflow-hidden rounded-md bg-[#e8e4dc]">@if($related->cover_url)<img src="{{ $related->cover_url }}" alt="{{ $related->title }}" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]">@endif</div><p class="eyebrow mt-4">{{ $related->published_at->format('d.m.Y') }}</p><h3 class="mt-2 font-display text-2xl">{{ $related->title }}</h3></a>@endforeach</div></div></section>@endif
+@endsection
